@@ -40,7 +40,7 @@ int count_live_neighbour_cell(char a[row][col], int r, int c)
 int main()
 {
     char a[row][col], b[row][col];
-    int i, j, tempval, livecount=10;
+    int i, j, tempval, livecount=20;
     int neighbour_live_cell;
     srand(time(0));
 
@@ -48,7 +48,7 @@ int main()
     // dead cells)
     for (i = 0; i < row; i++) {
         for (j = 0; j < col; j++) {
-            tempval = rand() % 3;
+            tempval = rand() % 7;
             if (tempval == 1 && (livecount>0))
             {
                 a[i][j] = 'O';
