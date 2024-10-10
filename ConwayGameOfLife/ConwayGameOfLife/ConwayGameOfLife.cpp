@@ -4,9 +4,71 @@
 using namespace std;
 
 // change row and column value to set the canvas size
-const int row = 10;
-const int col = 10;
+const int maxrow = 50;
+const int maxcol = 50;
 
+class ConwayGame
+{
+private:
+
+    char a[maxrow][maxcol];
+    int row, col, frameno, i, j, tempval, livecount;
+    int neighbour_live_cell;
+
+public:
+
+    ConwayGame()
+    {
+        cout << "\nenter row size: ";
+        cin >> row;
+        cout << "\nenter col size: ";
+        cin >> col;
+        cout << "\nenter number of living cells: ";
+        cin >> livecount;
+        cout << "Enter number of frames: ";
+        cin >> frameno;
+        cout << endl;
+        
+        //setup first frame
+        for (i = 0; i < row; i++) {
+            for (j = 0; j < col; j++) {
+                tempval = rand() % 2;
+                if (tempval == 1 && (livecount > 0))
+                {
+                    a[i][j] = 'O';
+                    livecount--;
+
+                }
+                else
+                {
+                    a[i][j] = '.';
+                }
+
+            }
+        }
+        //end of array construstion
+
+    }
+
+    int count_live_neighbour_cell(char a[maxrow][maxcol], int r, int c)
+    {
+        int i, j, count = 0;
+        for (i = r - 1; i <= r + 1; i++) {
+            for (j = c - 1; j <= c + 1; j++) {
+                if ((i == r && j == c) || (i < 0 || j < 0)
+                    || (i >= maxrow || j >= maxcol)) {
+                    continue;
+                }
+                if (a[i][j] == 'O') {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+
+};
 
 // creates row boundary
 /*int row_line()
@@ -20,13 +82,13 @@ const int col = 10;
 }*/
 
 // returns the count of alive neighbours
-int count_live_neighbour_cell(char a[row][col], int r, int c)
+int count_live_neighbour_cell(char a[maxrow][maxcol], int r, int c)
 {
     int i, j, count = 0;
     for (i = r - 1; i <= r + 1; i++) {
         for (j = c - 1; j <= c + 1; j++) {
             if ((i == r && j == c) || (i < 0 || j < 0)
-                || (i >= row || j >= col)) {
+                || (i >= maxrow || j >= maxcol)) {
                 continue;
             }
             if (a[i][j] == 'O') {
@@ -39,16 +101,24 @@ int count_live_neighbour_cell(char a[row][col], int r, int c)
 
 int main()
 {
-    char a[row][col], b[row][col];
-    int i, j, tempval, livecount=20;
+    char  a[maxrow][maxcol]; 
+    int row, col, frameno, i, j, tempval, livecount;
     int neighbour_live_cell;
     srand(time(0));
+
+    cout << "\nenter row size: ";
+    cin>>row;
+    cout << "\nenter col size: ";
+    cin >> col;
+    cout << "\nenter number of living cells: ";
+    cin >> livecount;
+    cout << endl;
 
     // generate matrix canvas with random values (live and
     // dead cells)
     for (i = 0; i < row; i++) {
         for (j = 0; j < col; j++) {
-            tempval = rand() % 7;
+            tempval = rand() % 2;
             if (tempval == 1 && (livecount>0))
             {
                 a[i][j] = 'O';
@@ -64,7 +134,7 @@ int main()
     }
 
     // print array matrix
-    cout << "Initial Stage:" << endl;
+    cout << "\nInitial Stage:" << endl;
     //row_line();
     for (i = 0; i < row; i++) {
         cout << " ";
