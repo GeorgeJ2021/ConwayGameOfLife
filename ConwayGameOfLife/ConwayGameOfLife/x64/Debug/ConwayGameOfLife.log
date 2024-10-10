@@ -1,4 +1,3 @@
 ﻿  ConwayGameOfLife.cpp
-D:\Conway\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(45,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-D:\Conway\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(42,29): warning C4101: 'b': unreferenced local variable
+D:\Conway\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(121,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   ConwayGameOfLife.vcxproj -> D:\Conway\ConwayGameOfLife\ConwayGameOfLife\x64\Debug\ConwayGameOfLife.exe
