@@ -1,1 +1,4 @@
-﻿  ConwayGameOfLife.vcxproj -> H:\testprograms\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife\x64\Debug\ConwayGameOfLife.exe
+﻿  ConwayGameOfLife.cpp
+D:\Conway\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(198,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+D:\Conway\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(192,1): warning C4715: 'newgame': not all control paths return a value
+  ConwayGameOfLife.vcxproj -> D:\Conway\ConwayGameOfLife\ConwayGameOfLife\x64\Debug\ConwayGameOfLife.exe

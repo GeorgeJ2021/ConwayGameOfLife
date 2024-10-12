@@ -11,11 +11,13 @@ class ConwayGame
 {
 private:
 
-    char a[maxrow][maxcol];
-    int row, col, frameno, i, j, tempval, livecount;
+    char a[maxrow][maxcol] , b[maxrow][maxcol];
+    int row, col, i, j, tempval, livecount;
     int neighbour_live_cell;
 
 public:
+    
+    int frameno = 1, maxframe;
 
     ConwayGame()
     {
@@ -26,7 +28,7 @@ public:
         cout << "\nEnter number of living cells: ";
         cin >> livecount;
         cout << "\nEnter number of frames: ";
-        cin >> frameno;
+        cin >> maxframe;
         cout << endl;
         
         //setup first frame
@@ -43,7 +45,7 @@ public:
                 {
                     a[i][j] = ' ';
                 }
-
+                b[i][j] = a[i][j];
             }
         }
         //end of array construstion
@@ -54,12 +56,12 @@ public:
 
     }
 
-    int getframeno()
-    {
-        return frameno;
+    template <typename T>
+    bool checkFrameEqual(T maxframe, T frameno) {
+        return maxframe == frameno;
     }
 
-    int count_live_neighbour_cell(char a[maxrow][maxcol], int r, int c)
+    int ApplyRules(char a[maxrow][maxcol], int r, int c) //counts living cell neighbours
     {
         int i, j, count = 0;
         for (i = r - 1; i <= r + 1; i++) {
@@ -76,12 +78,12 @@ public:
         return count;
     }
 
-    void ApplyRules()
+    int ApplyRules()
     {
         for (i = 0; i < row; i++) {
             for (j = 0; j < col; j++) {
                 neighbour_live_cell
-                    = count_live_neighbour_cell(a, i, j);
+                    = ApplyRules(a, i, j);
                 if (a[i][j] == 'O'
                     && (neighbour_live_cell == 2
                         || neighbour_live_cell == 3)) {
@@ -98,6 +100,7 @@ public:
                 }
             }
         }
+        return 0;
     }
     int row_line()
     {
@@ -121,52 +124,72 @@ public:
             cout << endl;
             //row_line();
         }
-        row_line();
-        if (frameno > 0)
-        {
-            frameno--;
-        }
+        row_line();  
+        frameno++;
+        
         
     }
 
-
+    void resetsimulation()
+    {
+        for (i = 0; i < row; i++) {
+            for (j = 0; j < col; j++) {
+                a[i][j] = b[i][j];
+            }
+        }
+        frameno = 1;
+    }
 };
 
 int newgame()
 {
     char response;
+    int currentFrame = 0;
     ConwayGame G1;
-    cout << "\n 1.Resume \n 2.Restart \n 3. Back to menu";
     G1.PrintFrame();
     do
     {
         G1.ApplyRules();
         G1.PrintFrame();
+
+
+    } while (!(G1.checkFrameEqual(G1.maxframe+1,G1.frameno)));
+
+    do {
+        cout << "\n 1. Resume current simulation \n 2. Reset current simulation \n 3. Restart with new simulation \n 4. Back to menu";
         cout << "\n awaiting input : ";
         cin >> response;
         cout << endl;
 
-    } while (G1.getframeno() >= 0 && (response == '1'));
+        if (response == '1')
+        {
+                G1.ApplyRules();
+                G1.PrintFrame();
+        }
 
-    if (response == '3')
-    {
-        cout << "\n BACK TO MAIN MENU \n______________" << endl;
-        return 0;
-    }
+        if (response == '2')
+        {
+            cout << "\n resetting simulation" << endl;
+            G1.resetsimulation();
+            G1.PrintFrame();
+        }
 
-    if (response == '2')
-    {
-        cout << "\n Restarting..." << endl;
-        G1.~ConwayGame();
-        newgame();
-    }
+        if (response == '4')
+        {
+            cout << "\n BACK TO MAIN MENU \n______________" << endl;
+            return 0;
+        }
 
-    return 0;
+        if (response == '3')
+        {
+            cout << "\n Loading new simulation..." << endl;
+            G1.~ConwayGame();
+            newgame();
+        }
+
+    } while (response != '4');
 
 }
-
-
-
 
 
 
@@ -175,17 +198,17 @@ int main()
     srand(time(0));
     char userinput;
     cout << "\n CONWAY'S GAME OF LIFE";
-    cout << "\n_______________" << endl;;
-    cout << "\n 1. Start new game  \n 2. Load Game \n 3. Quit Game" << endl;
-
+    cout << "\n_______________" << endl;
+    //cout << "\n 1. Start new game  \n 2. Load Game \n 3. Quit Game" << endl;
     do
     {
+        cout << "\n 1. Start new game  \n 2. Load Game \n 3. Quit Game" << endl;
         cout << "\n Awaiting input : ";
         cin >> userinput;
         switch (userinput) {
 
         case '1':
-            cout << "Hello world" << endl;
+            cout << "\n Starting Game..." << endl;
             newgame();         
             break;
         
@@ -194,9 +217,6 @@ int main()
         case '3':
             break;
             // Quit
-
-
-
 
         }
 
