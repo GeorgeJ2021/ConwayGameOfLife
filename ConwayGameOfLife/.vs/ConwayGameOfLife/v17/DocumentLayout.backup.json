@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Conway\\ConwayGameOfLife\\ConwayGameOfLife\\",
+  "WorkspaceRootPath": "D:\\Conway\\ConwayGameOfLife\\ConwayGameOfLife2\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{16DFA76A-DFBF-43DA-84DE-354190407C83}|ConwayGameOfLife\\ConwayGameOfLife.vcxproj|D:\\Conway\\ConwayGameOfLife\\ConwayGameOfLife\\ConwayGameOfLife\\ConwayGameOfLife.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{16DFA76A-DFBF-43DA-84DE-354190407C83}|ConwayGameOfLife\\ConwayGameOfLife.vcxproj|D:\\Conway\\ConwayGameOfLife\\ConwayGameOfLife2\\ConwayGameOfLife\\ConwayGameOfLife.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{16DFA76A-DFBF-43DA-84DE-354190407C83}|ConwayGameOfLife\\ConwayGameOfLife.vcxproj|solutionrelative:ConwayGameOfLife\\ConwayGameOfLife.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -24,11 +24,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "ConwayGameOfLife.cpp",
-              "DocumentMoniker": "D:\\Conway\\ConwayGameOfLife\\ConwayGameOfLife\\ConwayGameOfLife\\ConwayGameOfLife.cpp",
+              "DocumentMoniker": "D:\\Conway\\ConwayGameOfLife\\ConwayGameOfLife2\\ConwayGameOfLife\\ConwayGameOfLife.cpp",
               "RelativeDocumentMoniker": "ConwayGameOfLife\\ConwayGameOfLife.cpp",
-              "ToolTip": "D:\\Conway\\ConwayGameOfLife\\ConwayGameOfLife\\ConwayGameOfLife\\ConwayGameOfLife.cpp",
+              "ToolTip": "D:\\Conway\\ConwayGameOfLife\\ConwayGameOfLife2\\ConwayGameOfLife\\ConwayGameOfLife.cpp",
               "RelativeToolTip": "ConwayGameOfLife\\ConwayGameOfLife.cpp",
-              "ViewState": "AgIAAPwAAAAAAAAAAAAAABgBAAAfAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAKIAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-10-09T22:24:33.54Z",
               "EditorCaption": ""

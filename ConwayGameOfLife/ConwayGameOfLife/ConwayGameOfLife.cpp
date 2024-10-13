@@ -2,17 +2,22 @@
 #include <cstdlib> 
 #include <ctime>
 #include <fstream>
+#include <thread>
+#include <vector>
+#include <mutex>
 using namespace std;
 
 // change row and column value to set the canvas size
 const int maxrow = 50;
 const int maxcol = 50;
 
+std::mutex mtx;
+
 class ConwayGame
 {
 private:
 
-    char a[maxrow][maxcol] , b[maxrow][maxcol];
+    char a[maxrow][maxcol] , b[maxrow][maxcol], c[maxrow][maxcol];
     int row, col, i, j, tempval, livecount;
     int neighbour_live_cell;
 
@@ -112,30 +117,51 @@ public:
         return count;
     }
 
-    int ApplyRules()
-    {
-        for (i = 0; i < row; i++) {
-            for (j = 0; j < col; j++) {
-                neighbour_live_cell
-                    = ApplyRules(a, i, j);
-                if (a[i][j] == 'O'
-                    && (neighbour_live_cell == 2
-                        || neighbour_live_cell == 3)) {
-                    a[i][j] = 'O';
+    // Function to update a portion of the grid concurrently
+    void UpdateGridSection(int startRow, int endRow) {
+        for (int i = startRow; i < endRow; i++) {
+            for (int j = 0; j < col; j++) {
+                int neighbour_live_cell = ApplyRules(a, i, j);
+                if (a[i][j] == 'O' && (neighbour_live_cell == 2 || neighbour_live_cell == 3)) {
+                    c[i][j] = 'O'; // Remains alive
                 }
-
-                else if (a[i][j] == ' '
-                    && neighbour_live_cell == 3) {
-                    a[i][j] = 'O';
+                else if (a[i][j] == ' ' && neighbour_live_cell == 3) {
+                    c[i][j] = 'O'; // Comes to life
                 }
-
                 else {
-                    a[i][j] = ' ';
+                    c[i][j] = ' '; // Dies
                 }
             }
         }
-        return 0;
     }
+
+    void ApplyRulesParallel() {
+        int numThreads = 4;  // Number of threads to use
+        int chunkSize = row / numThreads;  // Divide grid into chunks
+
+        vector<thread> threads;
+
+        for (int i = 0; i < numThreads; i++) {
+            int startRow = i * chunkSize;
+            int endRow = (i == numThreads - 1) ? row : (i + 1) * chunkSize;
+
+            // Launch threads to update grid sections
+            threads.push_back(thread(&ConwayGame::UpdateGridSection, this, startRow, endRow));
+        }
+
+        // Join all threads to ensure they complete before proceeding
+        for (auto& th : threads) {
+            th.join();
+        }
+
+        // After parallel computation, update the main grid 'a'
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                a[i][j] = c[i][j];
+            }
+        }
+    }
+
     int row_line()
     {
         //cout << endl;
@@ -217,7 +243,7 @@ void newgame();
 
     do
     {
-        G1.ApplyRules();
+        G1.ApplyRulesParallel();
         G1.PrintFrame();
 
 
@@ -231,7 +257,7 @@ void newgame();
 
         if (response == '1')
         {
-            G1.ApplyRules();
+            G1.ApplyRulesParallel();
             G1.PrintFrame();
         }
 
