@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib> 
 #include <ctime>
+#include <fstream>
 using namespace std;
 
 // change row and column value to set the canvas size
@@ -51,14 +52,47 @@ public:
         //end of array construstion
 
     }
-    ~ConwayGame()
-    {
 
+    ConwayGame(const string& filename)
+    {
+        ifstream file(filename);
+        if (!file) {
+            cerr << "Error: Could not open file for loading." << endl;
+            return;
+        }
+
+        file >> row >> col >> maxframe;  // Load dimensions and remaining frames
+
+        // Load the grid
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (a[i][j] == '_')
+                {
+                    //file >> a[i][j];
+                    a[i][j] = ' ';
+                }           
+                file >> a[i][j];
+                //b[i][j] = a[i][j];
+            }
+        }
+
+        cout << "Game state loaded from " << filename << endl;
+        file.close();
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (a[i][j] == '_')
+                {
+                    a[i][j] = ' ';
+                }
+                b[i][j] = a[i][j];
+            }
+        }
     }
 
     template <typename T>
-    bool checkFrameEqual(T maxframe, T frameno) {
-        return maxframe == frameno;
+    bool checkEqual(T a, T b) {
+        return a == b;
     }
 
     int ApplyRules(char a[maxrow][maxcol], int r, int c) //counts living cell neighbours
@@ -139,32 +173,66 @@ public:
         }
         frameno = 1;
     }
+
+    void savefile(const string& filename)
+    {
+        ofstream file(filename);
+        if (!file) {
+            cerr << "Error: Could not open file for saving." << endl;
+            return;
+        }
+
+        file << row << " " << col << " " << maxframe << endl;  // Save dimensions and remaining frames
+
+        // Save the grid
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (a[i][j] == ' ')
+                {
+                    a[i][j] = '_';
+                    file << a[i][j];
+                }
+                else
+                {
+                    file << a[i][j];
+                }
+            }
+            file << endl;
+        }
+
+        cout << "Game state saved to " << filename << endl;
+        file.close();
+    }
+
 };
 
-int newgame()
+void newgame();
+
+ int SimulationOperation (ConwayGame& G1)
 {
+   
     char response;
     int currentFrame = 0;
-    ConwayGame G1;
     G1.PrintFrame();
+
     do
     {
         G1.ApplyRules();
         G1.PrintFrame();
 
 
-    } while (!(G1.checkFrameEqual(G1.maxframe+1,G1.frameno)));
+    } while (!(G1.checkEqual(G1.maxframe + 1, G1.frameno)));
 
     do {
-        cout << "\n 1. Resume current simulation \n 2. Reset current simulation \n 3. Restart with new simulation \n 4. Back to menu";
+        cout << "\n 1. Resume current simulation \n 2. Reset current simulation \n 3. Restart with new simulation \n 4. save current Frame \n 5. Back to main menu";
         cout << "\n awaiting input : ";
         cin >> response;
         cout << endl;
 
         if (response == '1')
         {
-                G1.ApplyRules();
-                G1.PrintFrame();
+            G1.ApplyRules();
+            G1.PrintFrame();
         }
 
         if (response == '2')
@@ -174,7 +242,7 @@ int newgame()
             G1.PrintFrame();
         }
 
-        if (response == '4')
+        if (response == '5')
         {
             cout << "\n BACK TO MAIN MENU \n______________" << endl;
             return 0;
@@ -187,16 +255,39 @@ int newgame()
             newgame();
         }
 
-    } while (response != '4');
+        if (response == '4')
+        {
+            string filename;
+            cout << "\n Enter filename to save the current frame: ";
+            cin >> filename;
+            G1.savefile(filename);
+        }
 
+    } while (response != '5');
 }
 
+ void newgame()
+ {
+     ConwayGame Game;
+     SimulationOperation(Game);
+ }
 
+ void Loadgame()
+ {
+     string filename;
+     cout << "\n Enter filename to load the game from: ";
+     cin >> filename;
+     ConwayGame Game(filename);
+     SimulationOperation(Game);
+     //SimulationOperation(Game);
+ }
 
 int main()
 {
     srand(time(0));
     char userinput;
+    string filename;
+    //ConwayGame g1;
     cout << "\n CONWAY'S GAME OF LIFE";
     cout << "\n_______________" << endl;
     //cout << "\n 1. Start new game  \n 2. Load Game \n 3. Quit Game" << endl;
@@ -205,6 +296,7 @@ int main()
         cout << "\n 1. Start new game  \n 2. Load Game \n 3. Quit Game" << endl;
         cout << "\n Awaiting input : ";
         cin >> userinput;
+
         switch (userinput) {
 
         case '1':
@@ -213,6 +305,9 @@ int main()
             break;
         
         case '2':
+            cout << "\n Loading...." << endl;
+            Loadgame();
+            break;
             // Load existing file
         case '3':
             break;
