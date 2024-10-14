@@ -125,7 +125,7 @@ public:
         return a == b;
     }
 
-    int ApplyRules(char a[maxrow][maxcol], int r, int c) //counts living cell neighbours
+    int ApplyRules(int r, int c) //counts living cell neighbours
     {
         int i, j, count = 0;
         for (i = r - 1; i <= r + 1; i++) {
@@ -146,7 +146,7 @@ public:
     void UpdateGridSection(int startRow, int endRow) {
         for (int i = startRow; i < endRow; i++) {
             for (int j = 0; j < col; j++) {
-                int neighbour_live_cell = ApplyRules(a, i, j);
+                int neighbour_live_cell = ApplyRules(i, j);
                 if (a[i][j] == 'O' && (neighbour_live_cell == 2 || neighbour_live_cell == 3)) {
                     c[i][j] = 'O'; // Remains alive
                 }
@@ -197,18 +197,23 @@ public:
         return 0;
     }
 
-    void PrintFrame()
+    friend ostream& operator<<(ostream& os, const ConwayGame& game) {
+        //os << "\nFrame : " << game.frameno << endl;
+        for (int i = 0; i < game.row; i++) {
+            os << ".";
+            for (int j = 0; j < game.col; j++) {
+                os << game.a[i][j] << ".";
+            }
+            os << endl;
+        }
+        return os;
+    }
+
+    void PrintFrame(ConwayGame& game)
     {
         cout << "\nFrame : "<< frameno << endl;
         row_line();
-        for (i = 0; i < row; i++) {
-            cout << ".";
-            for (j = 0; j < col; j++) {
-                cout<< a[i][j]<<".";
-            }
-            cout << endl;
-            //row_line();
-        }
+        cout << game;
         row_line();  
         frameno++;
         
@@ -261,10 +266,10 @@ public:
             for (int j = 0; j < col - 1; ++j) {
                 if (a[i][j] == 'O' && a[i][j + 1] == 'O' &&
                     a[i + 1][j] == 'O' && a[i + 1][j + 1] == 'O') {
-                    if (ApplyRules(a,i, j) == 3 &&
-                        ApplyRules(a, i, j + 1) == 3 &&
-                        ApplyRules(a, i + 1, j) == 3 &&
-                        ApplyRules(a,i + 1, j + 1) == 3) {
+                    if (ApplyRules(i, j) == 3 &&
+                        ApplyRules(i, j + 1) == 3 &&
+                        ApplyRules(i + 1, j) == 3 &&
+                        ApplyRules(i + 1, j + 1) == 3) {
                         return true;  // Block detected with valid neighbor conditions
                     }
                 }
@@ -280,17 +285,76 @@ public:
                 if (a[i][j + 1] == 'O' && a[i][j + 2] == 'O' &&
                     a[i + 1][j] == 'O' && a[i + 1][j + 3] == 'O' &&
                     a[i + 2][j + 1] == 'O' && a[i + 2][j + 2] == 'O') {
-                    if (ApplyRules(a,i, j + 1) == 2 &&
-                        ApplyRules(a,i, j + 2) == 2 &&
-                        ApplyRules(a,i + 1, j) == 3 &&
-                        ApplyRules(a,i + 1, j + 3) == 3 &&
-                        ApplyRules(a,i + 2, j + 1) == 2 &&
-                        ApplyRules(a,i + 2, j + 2) == 2) {
+                    if (ApplyRules(i, j + 1) == 2 &&
+                        ApplyRules(i, j + 2) == 2 &&
+                        ApplyRules(i + 1, j) == 2 &&
+                        ApplyRules(i + 1, j + 3) == 2 &&
+                        ApplyRules(i + 2, j + 1) == 2 &&
+                        ApplyRules(i + 2, j + 2) == 2) {
                         return true;  // Beehive detected with valid neighbor conditions
                     }
                 }
             }
         }
+        return false;
+    }
+
+    bool checkForBlinker() {
+        // Detect horizontal blinker
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col - 2; j++) {
+                if (a[i][j] == 'O' && a[i][j + 1] == 'O' && a[i][j + 2] == 'O') {
+                    if (ApplyRules(i, j) == 2 && ApplyRules(i, j + 1) == 2 && ApplyRules(i, j + 2) == 2) {
+                        return true;
+                    }
+                }
+            }
+        }
+        // Detect vertical blinker
+        for (int i = 0; i < row - 2; i++) {
+            for (int j = 0; j < col; j++) {
+                if (a[i][j] == 'O' && a[i + 1][j] == 'O' && a[i + 2][j] == 'O') {
+                    if (ApplyRules(i, j) == 2 && ApplyRules(i + 1, j) == 2 && ApplyRules(i + 2, j) == 2) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool checkForToad()
+    {
+        for (int i = 0; i < row - 1; i++) {
+            for (int j = 0; j < col - 3; j++) {
+                if (a[i][j] == ' ' && a[i][j + 1] == 'O' && a[i][j + 2] == 'O' && a[i][j + 3] == 'O' &&
+                    a[i + 1][j] == 'O' && a[i + 1][j + 1] == 'O' && a[i + 1][j + 2] == 'O' && a[i + 1][j + 3] == ' ') {
+                    if (ApplyRules(i, j + 1) == 4 && 
+                        ApplyRules(i, j + 2) == 4 && 
+                        ApplyRules(i, j + 3) == 2 &&
+                        ApplyRules(i + 1, j) == 2 &&
+                        ApplyRules(i + 1, j + 1) == 4 && 
+                        ApplyRules(i + 1, j + 2) == 4) {
+                        return true;
+                    }
+                }
+            }
+        }
+        //Fix this part
+        for (int i = 0; i < row - 3; i++) {
+            for (int j = 0; j < col - 1; j++) {
+                if (a[i][j] == ' ' && a[i + 1][j] == 'O' && a[i + 2][j] == 'O' && a[i + 3][j] == ' ' &&
+                    a[i][j + 1] == 'O' && a[i + 1][j + 1] == 'O' && a[i + 2][j + 1] == 'O' && a[i + 3][j + 1] == ' ') {
+                    if (ApplyRules(i + 1, j) == 4 && ApplyRules(i + 2, j) == 4 && ApplyRules(i + 1, j + 1) == 4 && ApplyRules(i + 2, j + 1) == 4) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+
+
         return false;
     }
 
@@ -303,12 +367,13 @@ void newgame();
    
     char response;
     int currentFrame = 0;
-    G1.PrintFrame();
+    string filename;
+    G1.PrintFrame(G1);
 
     do
     {
         G1.ApplyRulesParallel();
-        G1.PrintFrame();
+        G1.PrintFrame(G1);
 
 
     } while (!(G1.checkEqual(G1.maxframe + 1, G1.frameno)));
@@ -319,38 +384,36 @@ void newgame();
         cin >> response;
         cout << endl;
 
-        if (response == '1')
+        switch (response)
         {
-            G1.ApplyRulesParallel();
-            G1.PrintFrame();
-        }
+            case '1':
+                G1.ApplyRulesParallel();
+                G1.PrintFrame(G1);
+                break;
 
-        if (response == '2')
-        {
-            cout << "\n resetting simulation" << endl;
-            G1.resetsimulation();
-            G1.PrintFrame();
-        }
+            case '2':
+                cout << "\n resetting simulation" << endl;
+                G1.resetsimulation();
+                G1.PrintFrame(G1);
+                break;
 
-        if (response == '5')
-        {
-            cout << "\n BACK TO MAIN MENU \n______________" << endl;
-            return 0;
-        }
+            case '3':
+                cout << "\n Loading new simulation..." << endl;
+                G1.~ConwayGame();
+                newgame();
+                return 0;
+                break;
 
-        if (response == '3')
-        {
-            cout << "\n Loading new simulation..." << endl;
-            G1.~ConwayGame();
-            newgame();
-        }
+            case '4':
+                cout << "\n Enter filename to save the current frame: ";
+                cin >> filename;
+                G1.savefile(filename);
+                break;
 
-        if (response == '4')
-        {
-            string filename;
-            cout << "\n Enter filename to save the current frame: ";
-            cin >> filename;
-            G1.savefile(filename);
+            case '5':
+                cout << "\n BACK TO MAIN MENU \n______________" << endl;
+                return 0;
+
         }
 
     } while (response != '5');
@@ -380,7 +443,7 @@ void newgame();
      do
      {
          foundpattern = false;
-         ConwayGame GAME(35, 35, 150);
+         ConwayGame GAME(35, 35, 800);
          cout << "\n 1. Question 1 \n 2. Question 2 \n 3. Question 3 \n 4. Question 4 \n 5. Question 5 \n 6. Back to main menu" << endl;
          cout << "\n Awaiting response: ";
          cin >> response;
@@ -391,39 +454,51 @@ void newgame();
              newgame();
              break;
          case '2':
-             GAME.PrintFrame();
+             GAME.PrintFrame(GAME);
              do
              {
                  GAME.ApplyRulesParallel();
-                 GAME.PrintFrame();
-                 if (GAME.checkForBlock() || GAME.checkForBeehive())
+                 GAME.PrintFrame(GAME);
+                 if ( GAME.checkForBlock() || GAME.checkForBeehive())
                  {
                      foundpattern = true;
                      cout << "Block or Beehive detected at Frame : " << GAME.frameno -1 << endl;
                  }
              } while (!foundpattern && GAME.frameno < 100);
-             if (foundpattern == false)
-             {
-                 cout << "Pattern not found :(" << endl;
-             }
-             cout << "would you like to save ? (y/n) : ";
-             cin >> response;
-             if (response == 'y')
-             {
-                 GAME.maxframe = GAME.frameno;
-                 cout << "\n Enter filename to save the current frame: ";
-                 cin >> filename;
-                 GAME.savefile(filename);
-             }
-             else
-             {
-                 break;
-             }
-
-         case '6':
-
              break;
 
+         case '3':
+             GAME.PrintFrame(GAME);
+             do
+             {
+                 GAME.ApplyRulesParallel();
+                 GAME.PrintFrame(GAME);
+                 if (GAME.checkForToad() )
+                 {
+                     foundpattern = true;
+                     cout << "Blinker or Toad detected at Frame : " << GAME.frameno - 1 << endl;
+                 }
+             } while (!foundpattern && GAME.frameno < 100);
+             break;
+
+
+         case '6':
+             break;
+
+         }
+
+         if (foundpattern == false && response != '6')
+         {
+             cout << "Pattern not found :(" << endl;
+         }
+         cout << "would you like to save ? (y/n) : ";
+         cin >> response;
+         if (response == 'y')
+         {
+             GAME.maxframe = GAME.frameno;
+             cout << "\n Enter filename to save the current frame: ";
+             cin >> filename;
+             GAME.savefile(filename);
          }
 
      } while (response != '6');
@@ -441,7 +516,7 @@ int main()
     //cout << "\n 1. Start new game  \n 2. Load Game \n 3. Quit Game" << endl;
     do
     {
-        cout << "\n 1. Start new game  \n 2. Load Game \n 3. Open Questions menu \n 4.Quit" << endl;
+        cout << "\n 1. Start new game  \n 2. Load Game \n 3. Open Questions menu \n 4. Quit" << endl;
         cout << "\n Awaiting input : ";
         cin >> userinput;
 
