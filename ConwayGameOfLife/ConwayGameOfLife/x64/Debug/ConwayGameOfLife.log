@@ -1,4 +1,4 @@
 ﻿  ConwayGameOfLife.cpp
-D:\Conway\ConwayGameOfLife\ConwayGameOfLife2\ConwayGameOfLife\ConwayGameOfLife.cpp(338,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-D:\Conway\ConwayGameOfLife\ConwayGameOfLife2\ConwayGameOfLife\ConwayGameOfLife.cpp(318,1): warning C4715: 'SimulationOperation': not all control paths return a value
-  ConwayGameOfLife.vcxproj -> D:\Conway\ConwayGameOfLife\ConwayGameOfLife2\x64\Debug\ConwayGameOfLife.exe
+D:\Conway\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(435,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+D:\Conway\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(357,1): warning C4715: 'SimulationOperation': not all control paths return a value
+  ConwayGameOfLife.vcxproj -> D:\Conway\ConwayGameOfLife\ConwayGameOfLife\x64\Debug\ConwayGameOfLife.exe

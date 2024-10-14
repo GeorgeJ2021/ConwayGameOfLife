@@ -95,6 +95,31 @@ public:
         }
     }
 
+    ConwayGame(int r, int c, int lc)
+    {
+        row = r;
+        col = c;
+        livecount = 0;
+        maxframe = 1;
+
+        for (i = 0; i < row; i++) {
+            for (j = 0; j < col; j++) {
+                tempval = rand() % 4;
+                if (tempval == 1 && (livecount < lc))
+                {
+                    a[i][j] = 'O';
+                    livecount++;
+
+                }
+                else
+                {
+                    a[i][j] = ' ';
+                }
+                b[i][j] = a[i][j];
+            }
+        }
+    }
+
     template <typename T>
     bool checkEqual(T a, T b) {
         return a == b;
@@ -230,6 +255,45 @@ public:
         file.close();
     }
 
+    bool checkForBlock() {
+        // Check for a 2x2 block pattern
+        for (int i = 0; i < row - 1; ++i) {
+            for (int j = 0; j < col - 1; ++j) {
+                if (a[i][j] == 'O' && a[i][j + 1] == 'O' &&
+                    a[i + 1][j] == 'O' && a[i + 1][j + 1] == 'O') {
+                    if (ApplyRules(a,i, j) == 3 &&
+                        ApplyRules(a, i, j + 1) == 3 &&
+                        ApplyRules(a, i + 1, j) == 3 &&
+                        ApplyRules(a,i + 1, j + 1) == 3) {
+                        return true;  // Block detected with valid neighbor conditions
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    bool checkForBeehive() {
+        // Check for a 3x4 beehive pattern
+        for (int i = 0; i < row - 2; ++i) {
+            for (int j = 0; j < col - 3; ++j) {
+                if (a[i][j + 1] == 'O' && a[i][j + 2] == 'O' &&
+                    a[i + 1][j] == 'O' && a[i + 1][j + 3] == 'O' &&
+                    a[i + 2][j + 1] == 'O' && a[i + 2][j + 2] == 'O') {
+                    if (ApplyRules(a,i, j + 1) == 2 &&
+                        ApplyRules(a,i, j + 2) == 2 &&
+                        ApplyRules(a,i + 1, j) == 3 &&
+                        ApplyRules(a,i + 1, j + 3) == 3 &&
+                        ApplyRules(a,i + 2, j + 1) == 2 &&
+                        ApplyRules(a,i + 2, j + 2) == 2) {
+                        return true;  // Beehive detected with valid neighbor conditions
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 };
 
 void newgame();
@@ -308,6 +372,64 @@ void newgame();
      //SimulationOperation(Game);
  }
 
+ void QuestionMenu()
+ {
+     string filename;
+     char response;
+     bool foundpattern;
+     do
+     {
+         foundpattern = false;
+         ConwayGame GAME(35, 35, 150);
+         cout << "\n 1. Question 1 \n 2. Question 2 \n 3. Question 3 \n 4. Question 4 \n 5. Question 5 \n 6. Back to main menu" << endl;
+         cout << "\n Awaiting response: ";
+         cin >> response;
+
+         switch (response) {
+
+         case '1':
+             newgame();
+             break;
+         case '2':
+             GAME.PrintFrame();
+             do
+             {
+                 GAME.ApplyRulesParallel();
+                 GAME.PrintFrame();
+                 if (GAME.checkForBlock() || GAME.checkForBeehive())
+                 {
+                     foundpattern = true;
+                     cout << "Block or Beehive detected at Frame : " << GAME.frameno -1 << endl;
+                 }
+             } while (!foundpattern && GAME.frameno < 100);
+             if (foundpattern == false)
+             {
+                 cout << "Pattern not found :(" << endl;
+             }
+             cout << "would you like to save ? (y/n) : ";
+             cin >> response;
+             if (response == 'y')
+             {
+                 GAME.maxframe = GAME.frameno;
+                 cout << "\n Enter filename to save the current frame: ";
+                 cin >> filename;
+                 GAME.savefile(filename);
+             }
+             else
+             {
+                 break;
+             }
+
+         case '6':
+
+             break;
+
+         }
+
+     } while (response != '6');
+
+ }
+
 int main()
 {
     srand(time(0));
@@ -319,7 +441,7 @@ int main()
     //cout << "\n 1. Start new game  \n 2. Load Game \n 3. Quit Game" << endl;
     do
     {
-        cout << "\n 1. Start new game  \n 2. Load Game \n 3. Quit Game" << endl;
+        cout << "\n 1. Start new game  \n 2. Load Game \n 3. Open Questions menu \n 4.Quit" << endl;
         cout << "\n Awaiting input : ";
         cin >> userinput;
 
@@ -336,12 +458,16 @@ int main()
             break;
             // Load existing file
         case '3':
+            cout << "\n Questions Menu \n____________" << endl;
+            QuestionMenu();
             break;
             // Quit
+        case '4':
+            break;
 
         }
 
-    }while (userinput != '3');
+    }while (userinput != '4');
 
     cout << "\n Ending Game ";
 
