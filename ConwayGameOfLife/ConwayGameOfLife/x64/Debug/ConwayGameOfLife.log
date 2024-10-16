@@ -1,4 +1,0 @@
-﻿  ConwayGameOfLife.cpp
-H:\testprograms\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(510,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-H:\testprograms\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(420): warning C4715: 'SimulationOperation': not all control paths return a value
-  ConwayGameOfLife.vcxproj -> H:\testprograms\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife\x64\Debug\ConwayGameOfLife.exe

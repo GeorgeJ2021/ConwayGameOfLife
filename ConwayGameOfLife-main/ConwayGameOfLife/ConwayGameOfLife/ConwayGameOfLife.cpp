@@ -7,7 +7,6 @@
 #include <mutex>
 using namespace std;
 
-// change row and column value to set the canvas size
 const int maxrow = 50;
 const int maxcol = 50;
 
@@ -37,7 +36,6 @@ public:
         cin >> maxframe;
         cout << endl;
         
-        //setup first frame
         for (i = 0; i < row; i++) {
             for (j = 0; j < col; j++) {
                 tempval = rand() % 2;
@@ -54,7 +52,6 @@ public:
                 b[i][j] = a[i][j];
             }
         }
-        //end of array construstion
 
     }
 
@@ -73,11 +70,9 @@ public:
             for (int j = 0; j < col; j++) {
                 if (a[i][j] == '_')
                 {
-                    //file >> a[i][j];
                     a[i][j] = ' ';
                 }           
                 file >> a[i][j];
-                //b[i][j] = a[i][j];
             }
         }
 
@@ -125,7 +120,7 @@ public:
         return a == b;
     }
 
-    int ApplyRules(int r, int c) //counts living cell neighbours
+    int ApplyRules(int r, int c) 
     {
         int i, j, count = 0;
         for (i = r - 1; i <= r + 1; i++) {
@@ -148,21 +143,21 @@ public:
             for (int j = 0; j < col; j++) {
                 int neighbour_live_cell = ApplyRules(i, j);
                 if (a[i][j] == 'O' && (neighbour_live_cell == 2 || neighbour_live_cell == 3)) {
-                    c[i][j] = 'O'; // Remains alive
+                    c[i][j] = 'O'; 
                 }
                 else if (a[i][j] == ' ' && neighbour_live_cell == 3) {
-                    c[i][j] = 'O'; // Comes to life
+                    c[i][j] = 'O'; 
                 }
                 else {
-                    c[i][j] = ' '; // Dies
+                    c[i][j] = ' '; 
                 }
             }
         }
     }
 
     void ApplyRulesParallel() {
-        int numThreads = 4;  // Number of threads to use
-        int chunkSize = row / numThreads;  // Divide grid into chunks
+        int numThreads = 4;  
+        int chunkSize = row / numThreads;  
 
         vector<thread> threads;
 
@@ -170,16 +165,16 @@ public:
             int startRow = i * chunkSize;
             int endRow = (i == numThreads - 1) ? row : (i + 1) * chunkSize;
 
-            // Launch threads to update grid sections
+            
             threads.push_back(thread(&ConwayGame::UpdateGridSection, this, startRow, endRow));
         }
 
-        // Join all threads to ensure they complete before proceeding
+        
         for (auto& th : threads) {
             th.join();
         }
 
-        // After parallel computation, update the main grid 'a'
+        
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 a[i][j] = c[i][j];
@@ -189,7 +184,7 @@ public:
 
     int row_line()
     {
-        //cout << endl;
+        
         for (int i = 0; i < col+1; i++) {
             cout << ". ";
         }
@@ -198,7 +193,7 @@ public:
     }
 
     friend ostream& operator<<(ostream& os, const ConwayGame& game) {
-        //os << "\nFrame : " << game.frameno << endl;
+        
         for (int i = 0; i < game.row; i++) {
             os << ".";
             for (int j = 0; j < game.col; j++) {
@@ -238,9 +233,8 @@ public:
             return;
         }
 
-        file << row << " " << col << " " << maxframe << endl;  // Save dimensions and remaining frames
+        file << row << " " << col << " " << maxframe << endl;  
 
-        // Save the grid
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (a[i][j] == ' ')
@@ -270,7 +264,7 @@ public:
                         ApplyRules(i, j + 1) == 3 &&
                         ApplyRules(i + 1, j) == 3 &&
                         ApplyRules(i + 1, j + 1) == 3) {
-                        return true;  // Block detected with valid neighbor conditions
+                        return true; 
                     }
                 }
             }
@@ -291,7 +285,7 @@ public:
                         ApplyRules(i + 1, j + 3) == 2 &&
                         ApplyRules(i + 2, j + 1) == 2 &&
                         ApplyRules(i + 2, j + 2) == 2) {
-                        return true;  // Beehive detected with valid neighbor conditions
+                        return true;  
                     }
                 }
             }
@@ -300,7 +294,7 @@ public:
     }
 
     bool checkForBlinker() {
-        // Detect horizontal blinker
+        // horizontal blinker
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col - 2; j++) {
                 if (a[i][j] == 'O' && a[i][j + 1] == 'O' && a[i][j + 2] == 'O') {
@@ -310,7 +304,7 @@ public:
                 }
             }
         }
-        // Detect vertical blinker
+        // vertical blinker
         for (int i = 0; i < row - 2; i++) {
             for (int j = 0; j < col; j++) {
                 if (a[i][j] == 'O' && a[i + 1][j] == 'O' && a[i + 2][j] == 'O') {
@@ -356,7 +350,6 @@ public:
                 }
             }
         }
-
         return false;
     }
 
@@ -376,51 +369,63 @@ public:
     }
 
     bool IsolatedGlider(int i, int j) {
-        // Check if the 3x3 glider is isolated (no other live cells around it)
-        for (int x = i - 1; x <= i + 3; x++) {
-            for (int y = j - 1; y <= j + 3; y++) {
-                if ((x >= 0 && y >= 0 && x < row && y < col) &&
-                    !(x >= i && x <= i + 2 && y >= j && y <= j + 2)) {
 
-                    if (ApplyRules(x, y) > 0) {
-                        return false;  // Found unwanted live neighbors
-                    }
-                  // Found unwanted live neighbors
-                }
-            }
+
+        if (ApplyRules(i, j + 1) == 1 &&
+            ApplyRules(i + 1, j + 2) == 3 &&
+            ApplyRules(i + 2, j) == 1 &&
+            ApplyRules(i + 2, j + 1) == 3 &&
+            ApplyRules(i + 2, j + 2) == 2) {
+            return true;
         }
-        return true;
+
+        if (ApplyRules(i, j + 1) == 1 &&
+            ApplyRules(i + 1, j) == 3 &&
+            ApplyRules(i + 2, j) == 2 &&
+            ApplyRules(i + 2, j + 1) == 3 &&
+            ApplyRules(i + 2, j + 2) == 1) {
+            return true;
+        }
+
+        if (ApplyRules(i, j) == 1 &&
+            ApplyRules(i , j + 1) == 3 &&
+            ApplyRules(i , j + 2) == 2 &&
+            ApplyRules(i + 1, j + 2) == 3 &&
+            ApplyRules(i + 2, j + 1) == 1) {
+            return true;
+        }
+
+        if (ApplyRules(i, j) == 2 &&
+            ApplyRules(i, j + 1) == 3 &&
+            ApplyRules(i, j + 2) == 1 &&
+            ApplyRules(i + 1, j) == 3 &&
+            ApplyRules(i + 2, j + 1) == 1) {
+            return true;
+        }
+
+        return false;
     }
-
-
 
     bool checkForGlider() {
         for (int i = 0; i < row - 2; i++) {
             for (int j = 0; j < col - 2; j++) {
-                // Check if the current 3x3 block matches any of the initial glider configurations
+             
                 if (IsGlider(i, j)) {
-                    //cout << "\n glider found" << endl;
-                    // Check for live neighbors around the glider (it must be isolated)
+
                     if (IsolatedGlider(i, j)) {
-                        // Simulate the next 4 frames to see if the glider moves correctly
-                        //ConwayGame temp = *this;  // Copy the current game state
-                        cout << "\n glider isolated, checking frame" << endl;
                         ConwayGame temp(*this);
-                        // Check each of the next 4 generations
                         for (int frame = 1; frame <= 4; frame++) {
                             temp.ApplyRulesParallel();
-                            //temp.PrintFrame(temp);
-                        }// Simulate one generation
-
+                        }
                         for (int i = 0; i < row - 2; i++) {
                             for (int j = 0; j < col - 2; j++) {
                                 if (temp.IsGlider(i, j)) {
-
                                     if (temp.IsolatedGlider(i, j))
                                     {
+                                        cout << "\n glider exists" << endl;
                                         return true;
                                     }
-                                      // Glider detected
+                                      
                                 }
                             }
 
@@ -432,7 +437,65 @@ public:
         return false;
     }
 
-   
+    bool IsLWSS(int i , int j)
+    {
+        return a[i][j + 1] == 'O' && a[i][j + 4] == 'O' && a[i + 1][j] == 'O' && a[i + 2][j] == 'O' && a[i + 3][j] == 'O' &&
+                a[i + 3][j + 1] == 'O' && a[i + 3][j + 2] == 'O' && a[i + 3][j + 3] == 'O' && a[i + 2][j + 4] == 'O';
+
+    }
+
+    bool IsolatedLWSS(int i, int j) {
+
+
+        if (ApplyRules(i, j + 1) == 1 &&
+            ApplyRules(i, j + 4) == 0 &&
+            ApplyRules(i + 1, j) == 2 &&
+            ApplyRules(i + 2, j ) == 3 &&
+            ApplyRules(i + 3, j ) == 2 &&
+            ApplyRules(i + 3, j + 1) == 3 && 
+            ApplyRules(i + 3, j + 2) == 2 && 
+            ApplyRules(i + 3, j + 3) == 2 && 
+            ApplyRules(i + 2, j + 4) == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    bool checkForLWSS()
+    {
+        for (int i = 0; i < row - 3; i++) {
+            for (int j = 0; j < col - 4; j++) {
+
+                if (IsLWSS(i, j)) {
+
+                    //cout << "\n LWSS pattern detected, isolating:" << endl;
+
+                    if (IsolatedLWSS(i, j)) {
+                        //cout << "\n glider isolated, checking frame" << endl;
+                        ConwayGame temp(*this);
+                        for (int frame = 1; frame <= 4; frame++) {
+                            temp.ApplyRulesParallel();
+                        }
+                        for (int i = 0; i < row - 2; i++) {
+                            for (int j = 0; j < col - 2; j++) {
+                                if (temp.IsLWSS(i, j)) {
+                                    if (temp.IsolatedLWSS(i, j))
+                                    {
+                                        cout << "\n LWSS exists" << endl;
+                                        return true;
+                                    }
+
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+
+    }
 
 
 
@@ -510,16 +573,13 @@ void newgame();
      cin >> filename;
      ConwayGame Game(filename);
      Game.PrintFrame(Game);
-     if (Game.checkForGlider())
+     if (Game.checkForLWSS())
      {
-         cout << "\n glider detected" << endl;
+         cout << "\n LWSS detected" << endl;
      }
-     //Game.PrintFrame(Game);
-
-     
-     //SimulationOperation(Game);
 
      //SimulationOperation(Game);
+
  }
 
  int QuestionMenu()
@@ -575,10 +635,10 @@ void newgame();
              {
                  GAME.ApplyRulesParallel();
                  GAME.PrintFrame(GAME);
-                 if (GAME.checkForGlider())
+                 if ( GAME.checkForLWSS() || GAME.checkForGlider() )
                  {
                      foundpattern = true;
-                     cout << "glider detected at Frame : " << GAME.frameno - 1 << endl;
+                     cout << "\n Glider or LWSS detected at Frame : " << GAME.frameno - 1 << endl;
                  }
              } while (!foundpattern && GAME.frameno < 105);
              break;
@@ -612,10 +672,10 @@ int main()
     srand(time(0));
     char userinput;
     string filename;
-    //ConwayGame g1;
+    
     cout << "\n CONWAY'S GAME OF LIFE";
     cout << "\n_______________" << endl;
-    //cout << "\n 1. Start new game  \n 2. Load Game \n 3. Quit Game" << endl;
+    
     do
     {
         cout << "\n 1. Start new game  \n 2. Load Game \n 3. Open Questions menu \n 4. Quit" << endl;
@@ -633,12 +693,12 @@ int main()
             cout << "\n Loading...." << endl;
             Loadgame();
             break;
-            // Load existing file
+            
         case '3':
             cout << "\n Questions Menu \n____________" << endl;
             QuestionMenu();
             break;
-            // Quit
+           
         case '4':
             break;
 
