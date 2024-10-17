@@ -1,0 +1,6 @@
+﻿  ConwayGameOfLife.cpp
+H:\testprograms\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(977,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+H:\testprograms\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(756): warning C4715: 'ERNexp': not all control paths return a value
+H:\testprograms\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(815): warning C4715: 'SimulationOperation': not all control paths return a value
+H:\testprograms\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife\ConwayGameOfLife\ConwayGameOfLife.cpp(973): warning C4715: 'QuestionMenu': not all control paths return a value
+  ConwayGameOfLife.vcxproj -> H:\testprograms\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife-main\ConwayGameOfLife\x64\Debug\ConwayGameOfLife.exe
